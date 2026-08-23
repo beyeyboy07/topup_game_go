@@ -35,6 +35,7 @@ func main() {
 		&models.Game{},
 		&models.Product{},
 		&models.Provider{},
+		&models.Order{},
 	)
 
 	if err != nil {
@@ -69,6 +70,10 @@ func main() {
 		DB: db,
 	}
 
+	OrderController := &controllers.OrderController{
+		DB: db,
+	}
+
 	// ========================================
 	// 5. Register routes
 	// ========================================
@@ -85,6 +90,11 @@ func main() {
 	routes.SetupProviderRoutes(
 		router,
 		ProviderController,
+	)
+
+	routes.SetupOrderRoutes(
+		router,
+		OrderController,
 	)
 
 	// ========================================
