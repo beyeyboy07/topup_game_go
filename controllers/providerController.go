@@ -16,17 +16,29 @@ type ProviderController struct {
 	DB *gorm.DB
 }
 
+type ProviderRequest struct {
+	Name    string `json:"name" example:"Digiflazz"`
+	Code    string `json:"code" example:"DIGIFLAZZ"`
+	BaseURL string `json:"base_url" example:"https://api.example.com"`
+	ApiKey  string `json:"api_key" example:"secret-key"`
+	Status  bool   `json:"status" example:"true"`
+}
+
 // CreateProvider membuat provider baru.
+// @Summary Membuat provider
+// @Description Membuat provider baru.
+// @Tags providers
+// @Accept json
+// @Produce json
+// @Param request body ProviderRequest true "Data provider"
+// @Success 201 {object} utils.APIResponse
+// @Failure 400 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/providers [post]
 func (controller *ProviderController) CreateProvider(data *gin.Context) {
 
 	// Request body.
-	var request struct {
-		Name    string `json:"name"`
-		Code    string `json:"code"`
-		BaseURL string `json:"base_url"`
-		ApiKey  string `json:"api_key"`
-		Status  bool   `json:"status"`
-	}
+	var request ProviderRequest
 
 	// Decode JSON.
 	if err := data.ShouldBindJSON(&request); err != nil {
@@ -102,6 +114,13 @@ func (controller *ProviderController) CreateProvider(data *gin.Context) {
 // GetProviders mengambil semua provider.
 //
 // GET /api/providers
+// @Summary Mengambil semua provider
+// @Description Mengambil daftar provider tanpa mengekspos API key.
+// @Tags providers
+// @Produce json
+// @Success 200 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/providers [get]
 func (controller *ProviderController) GetProviders(data *gin.Context) {
 
 	// Menampung semua provider.
@@ -156,6 +175,14 @@ func (controller *ProviderController) GetProviders(data *gin.Context) {
 // GetProviderByID mengambil satu provider berdasarkan ID.
 //
 // GET /api/providers/:id
+// @Summary Mengambil provider berdasarkan ID
+// @Description Mengambil satu provider berdasarkan ID tanpa API key.
+// @Tags providers
+// @Produce json
+// @Param id path int true "ID provider"
+// @Success 200 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Router /api/providers/{id} [get]
 func (controller *ProviderController) GetProviderByID(data *gin.Context) {
 
 	// Ambil ID dari URL.
@@ -206,6 +233,18 @@ func (controller *ProviderController) GetProviderByID(data *gin.Context) {
 // UpdateProvider mengubah data provider.
 //
 // PUT /api/providers/:id
+// @Summary Mengubah provider
+// @Description Mengubah data provider berdasarkan ID.
+// @Tags providers
+// @Accept json
+// @Produce json
+// @Param id path int true "ID provider"
+// @Param request body ProviderRequest true "Data provider"
+// @Success 200 {object} utils.APIResponse
+// @Failure 400 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/providers/{id} [put]
 func (controller *ProviderController) UpdateProvider(data *gin.Context) {
 
 	// Ambil ID dari URL.
@@ -229,13 +268,7 @@ func (controller *ProviderController) UpdateProvider(data *gin.Context) {
 	}
 
 	// Request body.
-	var request struct {
-		Name    string `json:"name"`
-		Code    string `json:"code"`
-		BaseURL string `json:"base_url"`
-		ApiKey  string `json:"api_key"`
-		Status  bool   `json:"status"`
-	}
+	var request ProviderRequest
 
 	// Decode JSON.
 
@@ -306,6 +339,15 @@ func (controller *ProviderController) UpdateProvider(data *gin.Context) {
 // DeleteProvider menghapus provider.
 //
 // DELETE /api/providers/:id
+// @Summary Menghapus provider
+// @Description Menghapus provider secara soft delete berdasarkan ID.
+// @Tags providers
+// @Produce json
+// @Param id path int true "ID provider"
+// @Success 200 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/providers/{id} [delete]
 func (controller *ProviderController) DeleteProvider(data *gin.Context) {
 
 	// Ambil ID dari URL (Param).

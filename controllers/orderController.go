@@ -18,21 +18,33 @@ type OrderController struct {
 	DB *gorm.DB
 }
 
+type OrderRequest struct {
+	ProductID uint   `json:"product_id" example:"1"`
+	PlayerID  string `json:"player_id" example:"123456789"`
+	ServerID  string `json:"server_id" example:"1234"`
+}
+
 // CreateOrder membuat order baru.
 //
 // POST /api/orders
-
+// @Summary Membuat order
+// @Description Membuat order top-up baru berdasarkan product dan ID player.
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param request body OrderRequest true "Data order"
+// @Success 200 {object} utils.APIResponse
+// @Failure 400 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/orders [post]
 func (controller *OrderController) CreateOrder(data *gin.Context) {
 
 	// ========================================
 	// 1. Request body
 	// ========================================
 
-	var request struct {
-		ProductID uint   `json:"product_id"`
-		PlayerID  string `json:"player_id"`
-		ServerID  string `json:"server_id"`
-	}
+	var request OrderRequest
 
 	// Decode JSON.
 	err := data.ShouldBindJSON(&request)

@@ -16,21 +16,34 @@ type ProductController struct {
 	DB *gorm.DB
 }
 
+type ProductRequest struct {
+	GameID    uint   `json:"game_id" example:"1"`
+	Name      string `json:"name" example:"86 Diamonds"`
+	Code      string `json:"code" example:"ML86"`
+	BuyPrice  int64  `json:"buy_price" example:"10000"`
+	SellPrice int64  `json:"sell_price" example:"12000"`
+}
+
 // CreateProduct membuat product baru.
 //
 // POST /api/products
+// @Summary Membuat product
+// @Description Membuat product baru untuk game yang tersedia.
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param request body ProductRequest true "Data product"
+// @Success 201 {object} utils.APIResponse
+// @Failure 400 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/products [post]
 func (controller *ProductController) CreateProduct(
 	c *gin.Context,
 ) {
 
 	// Request body.
-	var request struct {
-		GameID    uint   `json:"game_id"`
-		Name      string `json:"name"`
-		Code      string `json:"code"`
-		BuyPrice  int64  `json:"buy_price"`
-		SellPrice int64  `json:"sell_price"`
-	}
+	var request ProductRequest
 
 	// Decode JSON.
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -121,6 +134,13 @@ func (controller *ProductController) CreateProduct(
 // GetProducts mengambil semua product.
 //
 // GET /api/products
+// @Summary Mengambil semua product
+// @Description Mengambil daftar seluruh product.
+// @Tags products
+// @Produce json
+// @Success 200 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/products [get]
 func (controlles *ProductController) GetProducts(c *gin.Context) {
 
 	// Menampung semua product.
@@ -181,6 +201,14 @@ func (controlles *ProductController) GetProducts(c *gin.Context) {
 // GetProductByID mengambil satu product berdasarkan ID.
 //
 // GET /api/products/:id
+// @Summary Mengambil product berdasarkan ID
+// @Description Mengambil satu product berdasarkan ID.
+// @Tags products
+// @Produce json
+// @Param id path int true "ID product"
+// @Success 200 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Router /api/products/{id} [get]
 
 func (controller *ProductController) GetProductByID(c *gin.Context) {
 
@@ -230,6 +258,18 @@ func (controller *ProductController) GetProductByID(c *gin.Context) {
 	)
 }
 
+// @Summary Mengubah product
+// @Description Mengubah data product berdasarkan ID.
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path int true "ID product"
+// @Param request body ProductRequest true "Data product"
+// @Success 200 {object} utils.APIResponse
+// @Failure 400 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/products/{id} [put]
 func (controller *ProductController) UpdateProduct(data *gin.Context) {
 
 	// Ambil ID dari URL.
@@ -250,13 +290,7 @@ func (controller *ProductController) UpdateProduct(data *gin.Context) {
 		return
 	}
 
-	var request struct {
-		GameID    uint   `json:"game_id"`
-		Name      string `json:"name"`
-		Code      string `json:"code"`
-		BuyPrice  int64  `json:"buy_price"`
-		SellPrice int64  `json:"sell_price"`
-	}
+	var request ProductRequest
 
 	// Decode JSON.
 
@@ -345,6 +379,15 @@ func (controller *ProductController) UpdateProduct(data *gin.Context) {
 // DeleteProduct menghapus product.
 //
 // DELETE /api/products/:id
+// @Summary Menghapus product
+// @Description Menghapus product secara soft delete berdasarkan ID.
+// @Tags products
+// @Produce json
+// @Param id path int true "ID product"
+// @Success 200 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/products/{id} [delete]
 func (controller *ProductController) DeleteProduct(data *gin.Context) {
 
 	id := data.Param("id")

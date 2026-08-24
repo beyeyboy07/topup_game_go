@@ -6,6 +6,7 @@ import (
 
 	"topup_games_go/models"
 	"topup_games_go/utils"
+
 	"github.com/gin-gonic/gin"
 
 	"gorm.io/gorm"
@@ -19,15 +20,27 @@ type GameController struct {
 	DB *gorm.DB
 }
 
+type GameRequest struct {
+	Name string `json:"name" example:"Mobile Legends"`
+	Code string `json:"code" example:"ML"`
+}
+
 // CreateGame membuat game baru.
 // POST /api/games
+// @Summary Membuat game
+// @Description Membuat game baru.
+// @Tags games
+// @Accept json
+// @Produce json
+// @Param request body GameRequest true "Data game"
+// @Success 201 {object} utils.APIResponse
+// @Failure 400 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/games [post]
 func (controller *GameController) CreateGame(c *gin.Context) {
 
 	// Request body.
-	var request struct {
-		Name string `json:"name"`
-		Code string `json:"code"`
-	}
+	var request GameRequest
 
 	// Bind JSON dari request body ke struct.
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -87,6 +100,13 @@ func (controller *GameController) CreateGame(c *gin.Context) {
 
 // GetGames mengambil semua game.
 // GET /api/games
+// @Summary Mengambil semua game
+// @Description Mengambil daftar seluruh game.
+// @Tags games
+// @Produce json
+// @Success 200 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/games [get]
 func (controller *GameController) GetGames(c *gin.Context) {
 
 	// Menampung semua game dari database.
@@ -130,8 +150,15 @@ func (controller *GameController) GetGames(c *gin.Context) {
 	)
 }
 
-
 // GET /api/games/1
+// @Summary Mengambil game berdasarkan ID
+// @Description Mengambil satu game berdasarkan ID.
+// @Tags games
+// @Produce json
+// @Param id path int true "ID game"
+// @Success 200 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Router /api/games/{id} [get]
 func (controller *GameController) GetGameByID(c *gin.Context) {
 
 	// ========================================
@@ -181,6 +208,18 @@ func (controller *GameController) GetGameByID(c *gin.Context) {
 
 // UpdateGame mengubah data game.
 // PUT /api/games/:id
+// @Summary Mengubah game
+// @Description Mengubah data game berdasarkan ID.
+// @Tags games
+// @Accept json
+// @Produce json
+// @Param id path int true "ID game"
+// @Param request body GameRequest true "Data game"
+// @Success 200 {object} utils.APIResponse
+// @Failure 400 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/games/{id} [put]
 func (controller *GameController) UpdateGame(c *gin.Context) {
 
 	// Ambil ID dari parameter URL.
@@ -208,10 +247,7 @@ func (controller *GameController) UpdateGame(c *gin.Context) {
 	}
 
 	// Request body.
-	var request struct {
-		Name string `json:"name"`
-		Code string `json:"code"`
-	}
+	var request GameRequest
 
 	// Decode JSON menggunakan Gin.
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -269,6 +305,15 @@ func (controller *GameController) UpdateGame(c *gin.Context) {
 
 // DeleteGame menghapus game berdasarkan ID.
 // DELETE /api/games/:id
+// @Summary Menghapus game
+// @Description Menghapus game secara soft delete berdasarkan ID.
+// @Tags games
+// @Produce json
+// @Param id path int true "ID game"
+// @Success 200 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/games/{id} [delete]
 func (controller *GameController) DeleteGame(c *gin.Context) {
 
 	// Ambil ID dari parameter URL.

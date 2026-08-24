@@ -5,11 +5,21 @@ import (
 
 	"topup_games_go/config"
 	"topup_games_go/controllers"
+	_ "topup_games_go/docs"
 	"topup_games_go/models"
 	"topup_games_go/routes"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+// @title Topup Games API
+// @version 1.0
+// @description REST API untuk mengelola game, product, provider, dan order top-up.
+// @host localhost:9000
+// @BasePath /
+// @schemes http https
 
 func main() {
 
@@ -96,6 +106,8 @@ func main() {
 		router,
 		OrderController,
 	)
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// ========================================
 	// 6. Jalankan server

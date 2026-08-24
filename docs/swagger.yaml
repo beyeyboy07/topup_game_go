@@ -1,0 +1,498 @@
+basePath: /
+definitions:
+  controllers.GameRequest:
+    properties:
+      code:
+        example: ML
+        type: string
+      name:
+        example: Mobile Legends
+        type: string
+    type: object
+  controllers.OrderRequest:
+    properties:
+      player_id:
+        example: "123456789"
+        type: string
+      product_id:
+        example: 1
+        type: integer
+      server_id:
+        example: "1234"
+        type: string
+    type: object
+  controllers.ProductRequest:
+    properties:
+      buy_price:
+        example: 10000
+        type: integer
+      code:
+        example: ML86
+        type: string
+      game_id:
+        example: 1
+        type: integer
+      name:
+        example: 86 Diamonds
+        type: string
+      sell_price:
+        example: 12000
+        type: integer
+    type: object
+  controllers.ProviderRequest:
+    properties:
+      api_key:
+        example: secret-key
+        type: string
+      base_url:
+        example: https://api.example.com
+        type: string
+      code:
+        example: DIGIFLAZZ
+        type: string
+      name:
+        example: Digiflazz
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  utils.APIResponse:
+    properties:
+      data:
+        description: Data yang dikirim API.
+      message:
+        description: Message dari API.
+        type: string
+      status:
+        description: |-
+          Status response.
+          Contoh: success / error
+        type: string
+    type: object
+host: localhost:9000
+info:
+  contact: {}
+  description: REST API untuk mengelola game, product, provider, dan order top-up.
+  title: Topup Games API
+  version: "1.0"
+paths:
+  /api/games:
+    get:
+      description: Mengambil daftar seluruh game.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengambil semua game
+      tags:
+      - games
+    post:
+      consumes:
+      - application/json
+      description: Membuat game baru.
+      parameters:
+      - description: Data game
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GameRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Membuat game
+      tags:
+      - games
+  /api/games/{id}:
+    delete:
+      description: Menghapus game secara soft delete berdasarkan ID.
+      parameters:
+      - description: ID game
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Menghapus game
+      tags:
+      - games
+    get:
+      description: Mengambil satu game berdasarkan ID.
+      parameters:
+      - description: ID game
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengambil game berdasarkan ID
+      tags:
+      - games
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data game berdasarkan ID.
+      parameters:
+      - description: ID game
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data game
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengubah game
+      tags:
+      - games
+  /api/orders:
+    post:
+      consumes:
+      - application/json
+      description: Membuat order top-up baru berdasarkan product dan ID player.
+      parameters:
+      - description: Data order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.OrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Membuat order
+      tags:
+      - orders
+  /api/products:
+    get:
+      description: Mengambil daftar seluruh product.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengambil semua product
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Membuat product baru untuk game yang tersedia.
+      parameters:
+      - description: Data product
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Membuat product
+      tags:
+      - products
+  /api/products/{id}:
+    delete:
+      description: Menghapus product secara soft delete berdasarkan ID.
+      parameters:
+      - description: ID product
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Menghapus product
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data product berdasarkan ID.
+      parameters:
+      - description: ID product
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data product
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengubah product
+      tags:
+      - products
+  /api/providers:
+    get:
+      description: Mengambil daftar provider tanpa mengekspos API key.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengambil semua provider
+      tags:
+      - providers
+    post:
+      consumes:
+      - application/json
+      description: Membuat provider baru.
+      parameters:
+      - description: Data provider
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ProviderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Membuat provider
+      tags:
+      - providers
+  /api/providers/{id}:
+    delete:
+      description: Menghapus provider secara soft delete berdasarkan ID.
+      parameters:
+      - description: ID provider
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Menghapus provider
+      tags:
+      - providers
+    get:
+      description: Mengambil satu provider berdasarkan ID tanpa API key.
+      parameters:
+      - description: ID provider
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengambil provider berdasarkan ID
+      tags:
+      - providers
+    put:
+      consumes:
+      - application/json
+      description: Mengubah data provider berdasarkan ID.
+      parameters:
+      - description: ID provider
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data provider
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ProviderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengubah provider
+      tags:
+      - providers
+schemes:
+- http
+- https
+swagger: "2.0"
