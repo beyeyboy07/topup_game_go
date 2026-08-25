@@ -160,3 +160,213 @@ func (controller *OrderController) CreateOrder(data *gin.Context) {
 	)
 
 }
+
+// GetOrderByID mengambil detail order berdasarkan ID.
+//
+// GET /api/orders/:id
+
+func (controller *OrderController) GetOrderByID(data *gin.Context) {
+
+	// Ambil ID dari URL.
+	id := data.Param("id")
+
+	// Siapkan object Order.
+	var order models.Order
+
+	// Cari order berdasarkan ID.
+	result := controller.DB.First(
+		&order,
+		id,
+	)
+
+	if result.Error != nil {
+		utils.Error(
+			data.Writer,
+			http.StatusNotFound,
+			"Order not found",
+		)
+
+		return
+	}
+
+	// Response.
+
+	response := map[string]interface{}{
+		"id":                      order.ID,
+		"order_number":            order.OrderNumber,
+		"product_id":              order.ProductID,
+		"product_name":            order.ProductName,
+		"player_id":               order.PlayerID,
+		"server_id":               order.ServerID,
+		"buy_price":               order.BuyPrice,
+		"sell_price":              order.SellPrice,
+		"status":                  order.Status,
+		"provider_transaction_id": order.ProviderTransactionID,
+		"expired_at":              order.ExpiredAt,
+		"paid_at":                 order.PaidAt,
+		"created_at":              order.CreatedAt,
+	}
+
+	utils.Success(
+		data.Writer,
+		http.StatusOK,
+		"Order retrieved successfully",
+		response,
+	)
+
+}
+
+func (controller *OrderController) GetOrders(data *gin.Context) {
+
+	// Menampung semua order.
+	var orders []models.Order
+
+	// Ambil data dari database.
+	result := controller.DB.Find(
+		&orders,
+	)
+
+	if result.Error != nil {
+
+		utils.Error(
+			data.Writer,
+			http.StatusInternalServerError,
+			"Failed to get orders",
+		)
+
+		return
+
+	}
+
+	// Menyiapkan response.
+	responses := make(
+		[]map[string]interface{},
+		0,
+		len(orders),
+	)
+
+	// Convert Order menjadi response.
+	for _, order := range orders {
+
+		responses = append(
+			responses,
+			map[string]interface{}{
+				"id":                      order.ID,
+				"order_number":            order.OrderNumber,
+				"product_id":              order.ProductID,
+				"product_name":            order.ProductName,
+				"player_id":               order.PlayerID,
+				"server_id":               order.ServerID,
+				"buy_price":               order.BuyPrice,
+				"sell_price":              order.SellPrice,
+				"status":                  order.Status,
+				"provider_transaction_id": order.ProviderTransactionID,
+				"expired_at":              order.ExpiredAt,
+				"paid_at":                 order.PaidAt,
+				"created_at":              order.CreatedAt,
+			},
+		)
+
+	}
+
+	// Response
+	utils.Success(
+		data.Writer,
+		http.StatusOK,
+		"Orders retrieved successfully",
+		responses,
+	)
+}
+
+// UpdateOrderStatus mengubah status order.
+//
+// PUT /api/orders/:id/status
+func (controller *OrderController) UpdateOrderStatus(
+	data *gin.Context,
+) {
+
+	// Ambil ID dari URL.
+	id := data.Param("id")
+
+	// Cari order.
+	var order models.Order
+
+	result := controller.DB.First(
+		&order,
+		id,
+	)
+
+	if result.Error != nil {
+
+		utils.Error(
+			data.Writer,
+			http.StatusNotFound,
+			"Order not found",
+		)
+
+		return
+	}
+
+	// Request body.
+	var request struct {
+		Status string `json:"status"`
+	}
+
+	// Decode JSON.
+	if err := data.ShouldBindJSON(&request); err != nil {
+
+		utils.Error(
+			data.Writer,
+			http.StatusBadRequest,
+			"Invalid request body",
+		)
+
+		return
+	}
+
+	// Validasi status.
+	if request.Status != "PENDING" &&
+		request.Status != "PROCESSING" &&
+		request.Status != "SUCCESS" &&
+		request.Status != "FAILED" {
+
+		utils.Error(
+			data.Writer,
+			http.StatusBadRequest,
+			"Invalid order status",
+		)
+
+		return
+	}
+
+	// Update status.
+	order.Status = request.Status
+
+	// Simpan perubahan.
+	result = controller.DB.Save(&order)
+
+	if result.Error != nil {
+
+		utils.Error(
+			data.Writer,
+			http.StatusInternalServerError,
+			result.Error.Error(),
+		)
+
+		return
+	}
+
+	// Response.
+	response := map[string]interface{}{
+		"id":           order.ID,
+		"order_number": order.OrderNumber,
+		"status":       order.Status,
+	}
+
+	utils.Success(
+		data.Writer,
+		http.StatusOK,
+		"Order status updated successfully",
+		response,
+	)
+}

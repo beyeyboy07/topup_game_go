@@ -18,4 +18,20 @@ func SetupOrderRoutes(router *gin.Engine, controller *controllers.OrderControlle
 		"",
 		controller.CreateOrder,
 	)
+
+	orderRoutes.GET(
+		"/:id",
+		controller.GetOrderByID,
+	)
+
+	orderRoutes.GET(
+		"",
+		controller.GetOrders,
+	)
+
+	// PUT /api/orders/:id/status
+	orderRoutes.PUT(
+		"/:id/status",
+		controller.UpdateOrderStatus,
+	)
 }
