@@ -24,6 +24,10 @@ type OrderRequest struct {
 	ServerID  string `json:"server_id" example:"1234"`
 }
 
+type OrderStatusRequest struct {
+	Status string `json:"status" example:"PROCESSING"`
+}
+
 // CreateOrder membuat order baru.
 //
 // POST /api/orders
@@ -176,7 +180,14 @@ func (controller *OrderController) CreateOrder(data *gin.Context) {
 // GetOrderByID mengambil detail order berdasarkan ID.
 //
 // GET /api/orders/:id
-
+// @Summary Mengambil order berdasarkan ID
+// @Description Mengambil satu order berdasarkan ID.
+// @Tags orders
+// @Produce json
+// @Param id path int true "ID order"
+// @Success 200 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Router /api/orders/{id} [get]
 func (controller *OrderController) GetOrderByID(data *gin.Context) {
 
 	// Ambil ID dari URL.
@@ -228,6 +239,15 @@ func (controller *OrderController) GetOrderByID(data *gin.Context) {
 
 }
 
+// GetOrders mengambil seluruh order.
+//
+// @Summary Mengambil semua order
+// @Description Mengambil daftar seluruh order.
+// @Tags orders
+// @Produce json
+// @Success 200 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/orders [get]
 func (controller *OrderController) GetOrders(data *gin.Context) {
 
 	// Menampung semua order.
@@ -293,6 +313,18 @@ func (controller *OrderController) GetOrders(data *gin.Context) {
 // UpdateOrderStatus mengubah status order.
 //
 // PUT /api/orders/:id/status
+// @Summary Mengubah status order
+// @Description Mengubah status order berdasarkan ID.
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param id path int true "ID order"
+// @Param request body OrderStatusRequest true "Status order"
+// @Success 200 {object} utils.APIResponse
+// @Failure 400 {object} utils.APIResponse
+// @Failure 404 {object} utils.APIResponse
+// @Failure 500 {object} utils.APIResponse
+// @Router /api/orders/{id}/status [put]
 func (controller *OrderController) UpdateOrderStatus(
 	data *gin.Context,
 ) {
@@ -320,9 +352,7 @@ func (controller *OrderController) UpdateOrderStatus(
 	}
 
 	// Request body.
-	var request struct {
-		Status string `json:"status"`
-	}
+	var request OrderStatusRequest
 
 	// Decode JSON.
 	if err := data.ShouldBindJSON(&request); err != nil {

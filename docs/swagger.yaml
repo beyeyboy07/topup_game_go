@@ -21,6 +21,12 @@ definitions:
         example: "1234"
         type: string
     type: object
+  controllers.OrderStatusRequest:
+    properties:
+      status:
+        example: PROCESSING
+        type: string
+    type: object
   controllers.ProductRequest:
     properties:
       buy_price:
@@ -211,6 +217,22 @@ paths:
       tags:
       - games
   /api/orders:
+    get:
+      description: Mengambil daftar seluruh order.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengambil semua order
+      tags:
+      - orders
     post:
       consumes:
       - application/json
@@ -242,6 +264,68 @@ paths:
           schema:
             $ref: '#/definitions/utils.APIResponse'
       summary: Membuat order
+      tags:
+      - orders
+  /api/orders/{id}:
+    get:
+      description: Mengambil satu order berdasarkan ID.
+      parameters:
+      - description: ID order
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengambil order berdasarkan ID
+      tags:
+      - orders
+  /api/orders/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Mengubah status order berdasarkan ID.
+      parameters:
+      - description: ID order
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Status order
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.OrderStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mengubah status order
       tags:
       - orders
   /api/products:
