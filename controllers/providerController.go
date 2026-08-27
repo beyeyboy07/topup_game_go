@@ -34,6 +34,7 @@ type ProviderRequest struct {
 // @Success 201 {object} utils.APIResponse
 // @Failure 400 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/providers [post]
 func (controller *ProviderController) CreateProvider(data *gin.Context) {
 
@@ -120,6 +121,7 @@ func (controller *ProviderController) CreateProvider(data *gin.Context) {
 // @Produce json
 // @Success 200 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/providers [get]
 func (controller *ProviderController) GetProviders(data *gin.Context) {
 
@@ -182,6 +184,7 @@ func (controller *ProviderController) GetProviders(data *gin.Context) {
 // @Param id path int true "ID provider"
 // @Success 200 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/providers/{id} [get]
 func (controller *ProviderController) GetProviderByID(data *gin.Context) {
 
@@ -244,6 +247,7 @@ func (controller *ProviderController) GetProviderByID(data *gin.Context) {
 // @Failure 400 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/providers/{id} [put]
 func (controller *ProviderController) UpdateProvider(data *gin.Context) {
 
@@ -347,6 +351,7 @@ func (controller *ProviderController) UpdateProvider(data *gin.Context) {
 // @Success 200 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/providers/{id} [delete]
 func (controller *ProviderController) DeleteProvider(data *gin.Context) {
 

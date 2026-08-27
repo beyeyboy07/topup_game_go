@@ -36,6 +36,7 @@ type GameRequest struct {
 // @Success 201 {object} utils.APIResponse
 // @Failure 400 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/games [post]
 func (controller *GameController) CreateGame(c *gin.Context) {
 
@@ -106,6 +107,7 @@ func (controller *GameController) CreateGame(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/games [get]
 func (controller *GameController) GetGames(c *gin.Context) {
 
@@ -158,6 +160,7 @@ func (controller *GameController) GetGames(c *gin.Context) {
 // @Param id path int true "ID game"
 // @Success 200 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/games/{id} [get]
 func (controller *GameController) GetGameByID(c *gin.Context) {
 
@@ -219,6 +222,7 @@ func (controller *GameController) GetGameByID(c *gin.Context) {
 // @Failure 400 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/games/{id} [put]
 func (controller *GameController) UpdateGame(c *gin.Context) {
 
@@ -313,6 +317,7 @@ func (controller *GameController) UpdateGame(c *gin.Context) {
 // @Success 200 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/games/{id} [delete]
 func (controller *GameController) DeleteGame(c *gin.Context) {
 

@@ -6,6 +6,7 @@ import (
 	"topup_games_go/config"
 	"topup_games_go/controllers"
 	_ "topup_games_go/docs"
+	"topup_games_go/middleware"
 	"topup_games_go/models"
 	"topup_games_go/routes"
 
@@ -20,6 +21,10 @@ import (
 // @host localhost:9000
 // @BasePath /
 // @schemes http https
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Masukkan token dengan format "Bearer {token}".
 
 func main() {
 
@@ -46,6 +51,7 @@ func main() {
 		&models.Product{},
 		&models.Provider{},
 		&models.Order{},
+		&models.User{},
 	)
 
 	if err != nil {
@@ -84,9 +90,13 @@ func main() {
 		DB: db,
 	}
 
+	authController := &controllers.AuthController{DB: db}
+
 	// ========================================
 	// 5. Register routes
 	// ========================================
+	routes.SetupAuthRoutes(router, authController)
+	routes.SetupAuthMiddleware(router, middleware.RequireAuth())
 	routes.SetupGameRoutes(
 		router,
 		gameController,

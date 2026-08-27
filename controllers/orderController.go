@@ -41,6 +41,7 @@ type OrderStatusRequest struct {
 // @Failure 400 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/orders [post]
 func (controller *OrderController) CreateOrder(data *gin.Context) {
 
@@ -125,7 +126,7 @@ func (controller *OrderController) CreateOrder(data *gin.Context) {
 	// 6. Buat Order
 	// ========================================
 	order := models.Order{
-		UserID:      1,
+		UserID:      data.MustGet("user_id").(uint),
 		ProductID:   product.ID,
 		PlayerID:    request.PlayerID,
 		ServerID:    request.ServerID,
@@ -187,6 +188,7 @@ func (controller *OrderController) CreateOrder(data *gin.Context) {
 // @Param id path int true "ID order"
 // @Success 200 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/orders/{id} [get]
 func (controller *OrderController) GetOrderByID(data *gin.Context) {
 
@@ -197,10 +199,11 @@ func (controller *OrderController) GetOrderByID(data *gin.Context) {
 	var order models.Order
 
 	// Cari order berdasarkan ID.
-	result := controller.DB.First(
-		&order,
-		id,
-	)
+	query := controller.DB
+	if data.GetString("user_role") != "admin" {
+		query = query.Where("user_id = ?", data.MustGet("user_id").(uint))
+	}
+	result := query.First(&order, id)
 
 	if result.Error != nil {
 		utils.Error(
@@ -247,6 +250,7 @@ func (controller *OrderController) GetOrderByID(data *gin.Context) {
 // @Produce json
 // @Success 200 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/orders [get]
 func (controller *OrderController) GetOrders(data *gin.Context) {
 
@@ -254,9 +258,11 @@ func (controller *OrderController) GetOrders(data *gin.Context) {
 	var orders []models.Order
 
 	// Ambil data dari database.
-	result := controller.DB.Find(
-		&orders,
-	)
+	query := controller.DB
+	if data.GetString("user_role") != "admin" {
+		query = query.Where("user_id = ?", data.MustGet("user_id").(uint))
+	}
+	result := query.Find(&orders)
 
 	if result.Error != nil {
 
@@ -324,6 +330,7 @@ func (controller *OrderController) GetOrders(data *gin.Context) {
 // @Failure 400 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/orders/{id}/status [put]
 func (controller *OrderController) UpdateOrderStatus(
 	data *gin.Context,

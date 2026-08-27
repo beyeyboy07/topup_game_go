@@ -24,6 +24,7 @@ func SetupGameRoutes(
 	//
 	// /api/games
 	gameRoutes := router.Group("/api/games")
+	gameRoutes.Use(AuthMiddleware)
 
 	// GET /api/games
 	gameRoutes.GET(
@@ -34,6 +35,7 @@ func SetupGameRoutes(
 	// POST /api/games
 	gameRoutes.POST(
 		"",
+		RequireAdmin,
 		controller.CreateGame,
 	)
 
@@ -50,12 +52,14 @@ func SetupGameRoutes(
 	// PUT /api/games/:id
 	gameRoutes.PUT(
 		"/:id",
+		RequireAdmin,
 		controller.UpdateGame,
 	)
 
 	// DELETE /api/games/:id
 	gameRoutes.DELETE(
 		"/:id",
+		RequireAdmin,
 		controller.DeleteGame,
 	)
 

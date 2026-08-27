@@ -14,9 +14,11 @@ func SetupProviderRoutes(router *gin.Engine, controller *controllers.ProviderCon
 	// Group /api/providers
 
 	providerRoutes := router.Group("/api/providers")
+	providerRoutes.Use(AuthMiddleware)
 
 	providerRoutes.POST(
 		"",
+		RequireAdmin,
 		controller.CreateProvider,
 	)
 
@@ -32,11 +34,13 @@ func SetupProviderRoutes(router *gin.Engine, controller *controllers.ProviderCon
 
 	providerRoutes.PUT(
 		"/:id",
+		RequireAdmin,
 		controller.UpdateProvider,
 	)
 
 	providerRoutes.DELETE(
 		"/:id",
+		RequireAdmin,
 		controller.DeleteProvider,
 	)
 }

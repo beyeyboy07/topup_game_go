@@ -9,6 +9,15 @@ definitions:
         example: Mobile Legends
         type: string
     type: object
+  controllers.LoginRequest:
+    properties:
+      email:
+        example: budi@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+    type: object
   controllers.OrderRequest:
     properties:
       player_id:
@@ -63,6 +72,18 @@ definitions:
         example: true
         type: boolean
     type: object
+  controllers.RegisterRequest:
+    properties:
+      email:
+        example: budi@example.com
+        type: string
+      name:
+        example: Budi
+        type: string
+      password:
+        example: password123
+        type: string
+    type: object
   utils.APIResponse:
     properties:
       data:
@@ -83,6 +104,74 @@ info:
   title: Topup Games API
   version: "1.0"
 paths:
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Menghasilkan access token untuk request terproteksi.
+      parameters:
+      - description: Data login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Login user
+      tags:
+      - auth
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Membuat akun customer baru.
+      parameters:
+      - description: Data registrasi
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.APIResponse'
+      summary: Mendaftarkan user
+      tags:
+      - auth
   /api/games:
     get:
       description: Mengambil daftar seluruh game.
@@ -97,6 +186,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengambil semua game
       tags:
       - games
@@ -126,6 +217,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Membuat game
       tags:
       - games
@@ -153,6 +246,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Menghapus game
       tags:
       - games
@@ -175,6 +270,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengambil game berdasarkan ID
       tags:
       - games
@@ -213,6 +310,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengubah game
       tags:
       - games
@@ -230,6 +329,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengambil semua order
       tags:
       - orders
@@ -263,6 +364,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Membuat order
       tags:
       - orders
@@ -286,6 +389,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengambil order berdasarkan ID
       tags:
       - orders
@@ -325,6 +430,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengubah status order
       tags:
       - orders
@@ -342,6 +449,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengambil semua product
       tags:
       - products
@@ -375,6 +484,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Membuat product
       tags:
       - products
@@ -402,6 +513,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Menghapus product
       tags:
       - products
@@ -440,6 +553,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengubah product
       tags:
       - products
@@ -457,6 +572,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengambil semua provider
       tags:
       - providers
@@ -486,6 +603,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Membuat provider
       tags:
       - providers
@@ -513,6 +632,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Menghapus provider
       tags:
       - providers
@@ -535,6 +656,8 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengambil provider berdasarkan ID
       tags:
       - providers
@@ -573,10 +696,18 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/utils.APIResponse'
+      security:
+      - BearerAuth: []
       summary: Mengubah provider
       tags:
       - providers
 schemes:
 - http
 - https
+securityDefinitions:
+  BearerAuth:
+    description: Masukkan token dengan format "Bearer {token}".
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

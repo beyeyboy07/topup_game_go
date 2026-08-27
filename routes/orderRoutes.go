@@ -13,6 +13,7 @@ func SetupOrderRoutes(router *gin.Engine, controller *controllers.OrderControlle
 
 	// Group /api/orders
 	orderRoutes := router.Group("/api/orders")
+	orderRoutes.Use(AuthMiddleware)
 
 	orderRoutes.POST(
 		"",
@@ -32,6 +33,7 @@ func SetupOrderRoutes(router *gin.Engine, controller *controllers.OrderControlle
 	// PUT /api/orders/:id/status
 	orderRoutes.PUT(
 		"/:id/status",
+		RequireAdmin,
 		controller.UpdateOrderStatus,
 	)
 }

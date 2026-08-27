@@ -15,10 +15,12 @@ func SetupProductRoutes(
 
 	// Group /api/products
 	productRoutes := router.Group("/api/products")
+	productRoutes.Use(AuthMiddleware)
 
 	// POST /api/products
 	productRoutes.POST(
 		"",
+		RequireAdmin,
 		controller.CreateProduct,
 	)
 
@@ -35,11 +37,13 @@ func SetupProductRoutes(
 
 	productRoutes.PUT(
 		"/:id",
+		RequireAdmin,
 		controller.UpdateProduct,
 	)
 
 	productRoutes.DELETE(
 		"/:id",
+		RequireAdmin,
 		controller.DeleteProduct,
 	)
 }

@@ -37,6 +37,7 @@ type ProductRequest struct {
 // @Failure 400 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/products [post]
 func (controller *ProductController) CreateProduct(
 	c *gin.Context,
@@ -140,6 +141,7 @@ func (controller *ProductController) CreateProduct(
 // @Produce json
 // @Success 200 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/products [get]
 func (controlles *ProductController) GetProducts(c *gin.Context) {
 
@@ -208,6 +210,7 @@ func (controlles *ProductController) GetProducts(c *gin.Context) {
 // @Param id path int true "ID product"
 // @Success 200 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/products/{id} [get]
 
 func (controller *ProductController) GetProductByID(c *gin.Context) {
@@ -269,6 +272,7 @@ func (controller *ProductController) GetProductByID(c *gin.Context) {
 // @Failure 400 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/products/{id} [put]
 func (controller *ProductController) UpdateProduct(data *gin.Context) {
 
@@ -387,6 +391,7 @@ func (controller *ProductController) UpdateProduct(data *gin.Context) {
 // @Success 200 {object} utils.APIResponse
 // @Failure 404 {object} utils.APIResponse
 // @Failure 500 {object} utils.APIResponse
+// @Security BearerAuth
 // @Router /api/products/{id} [delete]
 func (controller *ProductController) DeleteProduct(data *gin.Context) {
 
