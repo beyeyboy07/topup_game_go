@@ -252,17 +252,74 @@ func (controller *OrderController) GetOrderByID(data *gin.Context) {
 // @Failure 500 {object} utils.APIResponse
 // @Security BearerAuth
 // @Router /api/orders [get]
-func (controller *OrderController) GetOrders(data *gin.Context) {
+func (controller *OrderController) GetOrders(
+	data *gin.Context,
+) {
 
-	// Menampung semua order.
+	// Ambil page dari query.
+	page := 1
+
+	if data.Query("page") != "" {
+		if _, err := fmt.Sscanf(
+			data.Query("page"),
+			"%d",
+			&page,
+		); err != nil || page < 1 {
+
+			page = 1
+		}
+	}
+
+	// Ambil limit dari query.
+	limit := 10
+
+	if data.Query("limit") != "" {
+		if _, err := fmt.Sscanf(
+			data.Query("limit"),
+			"%d",
+			&limit,
+		); err != nil || limit < 1 {
+
+			limit = 10
+		}
+	}
+
+	// Batasi maksimal 100 data per request.
+	if limit > 100 {
+		limit = 100
+	}
+
+	// Hitung offset.
+	offset := (page - 1) * limit
+
+	// Menampung data order.
 	var orders []models.Order
 
-	// Ambil data dari database.
-	query := controller.DB
-	if data.GetString("user_role") != "admin" {
-		query = query.Where("user_id = ?", data.MustGet("user_id").(uint))
+	// Menampung total order.
+	var total int64
+
+	// Hitung total data.
+	result := controller.DB.
+		Model(&models.Order{}).
+		Count(&total)
+
+	if result.Error != nil {
+
+		utils.Error(
+			data.Writer,
+			http.StatusInternalServerError,
+			"Failed to count orders",
+		)
+
+		return
 	}
-	result := query.Find(&orders)
+
+	// Ambil data sesuai pagination.
+	result = controller.DB.
+		Order("id DESC").
+		Limit(limit).
+		Offset(offset).
+		Find(&orders)
 
 	if result.Error != nil {
 
@@ -273,7 +330,6 @@ func (controller *OrderController) GetOrders(data *gin.Context) {
 		)
 
 		return
-
 	}
 
 	// Menyiapkan response.
@@ -283,7 +339,6 @@ func (controller *OrderController) GetOrders(data *gin.Context) {
 		len(orders),
 	)
 
-	// Convert Order menjadi response.
 	for _, order := range orders {
 
 		responses = append(
@@ -304,15 +359,23 @@ func (controller *OrderController) GetOrders(data *gin.Context) {
 				"created_at":              order.CreatedAt,
 			},
 		)
-
 	}
 
-	// Response
+	// Response pagination.
+	response := map[string]interface{}{
+		"data": responses,
+		"pagination": map[string]interface{}{
+			"page":  page,
+			"limit": limit,
+			"total": total,
+		},
+	}
+
 	utils.Success(
 		data.Writer,
 		http.StatusOK,
 		"Orders retrieved successfully",
-		responses,
+		response,
 	)
 }
 
